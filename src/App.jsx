@@ -1,38 +1,53 @@
-import React, { Component } from 'react';
+import React, { useState }  from 'react';
 import { FeedbackOptions } from './components/feedback/feedback';
 import { Statistics } from './components/statistics/statistics';
 import { Notification } from 'components/notification/notification';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const App =() => {
 
-  setStateValue = opt => {
-    this.setState(preState => ({
-      [opt]: preState[opt] + 1,
-    }));
-  };
+  const[good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+  
+  const state = {
+    good: good,
+    neutral: neutral,
+    bad: bad,
+  }
 
-  render() {
-    const options = Object.keys(this.state);
-    const totalFeedback = Object.values(this.state).reduce((a, b) => a + b, 0);
+   const setStateValue = (opt) => {
+    switch (opt) {
+      case 'good':
+        setGood(good + 1); 
+        break;
+      case 'neutral':
+        setNeutral(neutral + 1);
+        break;
+      case 'bad':
+        setBad(bad + 1);
+        break;
+      default:
+        break;
+    }
+  };
+   
+
+  
+    const options = Object.keys(state);
+    const totalFeedback = good + neutral+ bad;
     let shownBlock;
     if (totalFeedback !== 0) {
-      shownBlock = <Statistics state={this.state} />;
+      shownBlock = <Statistics state={state}  totalFeedback={totalFeedback}/>;
     } else {
       shownBlock = <Notification message="There is no feedback" />;
     }
     return (
       <>
         <FeedbackOptions
-          onLeaveFeedback={this.setStateValue}
+          onLeaveFeedback={setStateValue}
           options={options}
         ></FeedbackOptions>
         {shownBlock}
       </>
     );
-  }
-}
+};
